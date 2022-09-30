@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: config-client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: config-client
+  template:
+    metadata:
+      labels:
+        app: config-client
+    spec:
+      containers:
+        - name: config-client
+          image: docker.io/library/client:0.0.1-SNAPSHOT
+          ports:
+            - containerPort: 9000
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 9000
+            initialDelaySeconds: 60
+            timeoutSeconds: 2
+            periodSeconds: 3
+            failureThreshold: 2
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 9000
+            initialDelaySeconds: 70
+            timeoutSeconds: 2
+            periodSeconds: 8
+            failureThreshold: 2
+
